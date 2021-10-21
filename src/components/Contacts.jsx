@@ -12,7 +12,7 @@ class Contacts extends Component {
   }
 
   showContacts = () => {
-    return this.state.contactsDisplayed.map((eachContact) => {
+    return this.state.contactsDisplayed.map((eachContact, index) => {
       return (
         <div>
           <tr>
@@ -25,10 +25,27 @@ class Contacts extends Component {
             </td>
             <td>{eachContact.name}</td>
             <td>{eachContact.popularity}</td>
+            <td>
+              <button
+                onClick={() => {
+                  this.deleteContact(index);
+                }}
+              >
+                Delete
+              </button>
+            </td>
           </tr>
         </div>
       );
     });
+  };
+
+  deleteContact = (theOneToDelete) => {
+    const clonedList = [...this.state.contactsDisplayed];
+
+    clonedList.splice(theOneToDelete, 1);
+
+    this.setState({ contactsDisplayed: clonedList });
   };
 
   addRandom = () => {
@@ -45,15 +62,53 @@ class Contacts extends Component {
     });
   };
 
+  //ideally I merge the two I might do when there is time
+
+  sortByName = () => {
+    const clonedList = [...this.state.contactsDisplayed];
+
+    clonedList.sort((a, b) => {
+      if (a.name > b.name) {
+        return 1;
+      } else if (b.name > a.name) {
+        return -1;
+      } else {
+        return 0;
+      }
+    });
+    this.setState({
+      contactsDisplayed: clonedList,
+    });
+  };
+
+  sortByPopularity = () => {
+    const clonedList = [...this.state.contactsDisplayed];
+
+    clonedList.sort((a, b) => {
+      if (a.popularity > b.popularity) {
+        return -1;
+      } else if (b.popularity > a.popularity) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    this.setState({
+      contactsDisplayed: clonedList,
+    });
+  };
+
   render() {
     return (
       <div>
         <h1 className="ListOfContacts">IronContacts</h1>
         <button onClick={this.addRandom}>Add Random Contact</button>
+        <button onClick={this.sortByName}>Sort By Name</button>
+        <button onClick={this.sortByPopularity}>Sort By Popularity</button>
 
         <table>
-          <tbody>
-            <tr>
+          <tr>
+            <thead>
               <th>
                 <b>Picture</b>
               </th>
@@ -63,9 +118,16 @@ class Contacts extends Component {
               <th>
                 <b>Popularity</b>
               </th>
-            </tr>
-            {this.showContacts()}
-          </tbody>
+              <th>
+                <b>Action</b>
+              </th>
+            </thead>
+          </tr>
+          <tr>
+            <tbody>
+              <th>{this.showContacts()}</th>
+            </tbody>
+          </tr>
         </table>
       </div>
     );
